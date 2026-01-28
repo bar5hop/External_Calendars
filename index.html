@@ -14,37 +14,31 @@
         html, body {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow: auto;
+            background: #f5f5f5;
         }
 
         .viewer-container {
-            position: relative;
             width: 100%;
-            height: 100%;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
 
-        /* The iframe displaying the Notion page */
-        .notion-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            pointer-events: none; /* Disable all mouse interactions on the iframe */
+        /* Screenshot image of the Notion page */
+        .notion-screenshot {
+            max-width: 100%;
+            width: 1200px;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: white;
         }
 
-        /* Invisible overlay to block all clicks and interactions */
-        .interaction-blocker {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            cursor: default;
-            /* Transparent but catches all events */
-            background: transparent;
-        }
-
-        /* Optional: subtle indicator that this is view-only */
+        /* View-only indicator badge */
         .view-only-badge {
             position: fixed;
             top: 10px;
@@ -56,45 +50,48 @@
             border-radius: 4px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: 12px;
-            pointer-events: none;
+        }
+
+        .loading-message {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .refresh-note {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #999;
+            font-size: 12px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="viewer-container">
-        <!-- Invisible overlay that blocks all interactions -->
-        <div class="interaction-blocker"></div>
-
-        <!-- The Notion page embedded in an iframe -->
-        <iframe
-            class="notion-frame"
-            src="https://wiggly-fir-b9a.notion.site/Shopify-HQ-Internal-2a913c836ea680dba839c76eee32d4dc"
-            title="Shopify HQ Internal - View Only"
-            loading="lazy"
-        ></iframe>
-
         <!-- View-only indicator badge -->
         <div class="view-only-badge">View Only</div>
+
+        <p class="loading-message">Loading page screenshot...</p>
+
+        <!-- Screenshot of the Notion page via thum.io -->
+        <img
+            class="notion-screenshot"
+            src="https://image.thum.io/get/width/1200/crop/1600/https://wiggly-fir-b9a.notion.site/Shopify-HQ-Internal-2a913c836ea680dba839c76eee32d4dc"
+            alt="Shopify HQ Internal - View Only"
+            onload="document.querySelector('.loading-message').style.display='none'"
+            onerror="document.querySelector('.loading-message').textContent='Failed to load screenshot. Please refresh.'"
+        >
+
+        <p class="refresh-note">Screenshot updates periodically. Refresh the page for the latest version.</p>
     </div>
 
     <script>
-        // Prevent keyboard shortcuts that might interact with the iframe
-        document.addEventListener('keydown', function(e) {
-            // Block common interactive shortcuts
-            if (e.ctrlKey || e.metaKey) {
-                // Allow refresh (F5, Ctrl+R) and close (Ctrl+W) but block others
-                if (!['r', 'w', 'F5'].includes(e.key)) {
-                    e.preventDefault();
-                }
-            }
-        });
-
         // Prevent right-click context menu
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
 
-        // Prevent drag operations
+        // Prevent drag operations on the image
         document.addEventListener('dragstart', function(e) {
             e.preventDefault();
         });
